@@ -1,4 +1,4 @@
-
+# TRANSCRIPTION 
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
@@ -24,6 +24,10 @@ from docx import Document
 
 
 def meeting_minutes(transcription):
+    
+    # check if audio or txt 
+    if transcription[-3:] == 
+    transcription = transcribe_audio(audio)
     abstract_summary = abstract_summary_extraction(transcription)
     key_points = key_points_extraction(transcription)
     action_items = action_item_extraction(transcription)
