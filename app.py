@@ -18,10 +18,12 @@ app.register_error_handler(404, page_not_found)
 def index():
     
     if request.method == 'POST':
-        data = request.form['content']  # Get JSON data
-        print(data)
+        # data = request.form['content']  # Get JSON data
+        # print(data)
+        file = request.form['content']
+        print(request.form['content'])
         # transcription = data['content']  # Access 'content' from JSON data
-        res = {'answer': aiapi.meeting_minutes(data)}
+        res = {'answer': aiapi.transcribe_audio(file)}
         print (res)
         return jsonify(res), 200
 

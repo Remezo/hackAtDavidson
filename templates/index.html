@@ -94,6 +94,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@700&family=Roboto&family=Sixtyfour&display=swap" rel="stylesheet">
 
+    <!-- Wavesurfer.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/wavesurfer.js@4.1.0/dist/wavesurfer.min.css" />
+
+    <!-- Wavesurfer.js JavaScript -->
+    <script src="https://unpkg.com/wavesurfer.js@4.1.0/dist/wavesurfer.min.js"></script>
+
+
 <style>
 body.home-page {
   font-family: 'Montserrat', sans-serif;
@@ -551,19 +558,71 @@ footer {
     //     });
     // }
 
+    // function saveAudioLocally() {
+    //         const audioInput = document.getElementById('audioInput');
+
+    //         if (audioInput.files.length > 0) {
+    //             const audioFile = audioInput.files[0];
+    //             const fileName = audioFile.name;
+
+    //             const reader = new FileReader();
+
+    //             reader.onload = function (event) {
+    //                 const audioData = event.target.result;
+
+    //                 // Save the audio data locally (you may want to use appropriate storage mechanism)
+    //                 // For simplicity, we are using localStorage here, which has limitations.
+    //                 localStorage.setItem(fileName, audioData);
+
+    //                 alert('Audio file saved locally!');
+    //             };
+
+    //             reader.readAsDataURL(audioFile);
+    //         } else {
+    //             alert('Please select an audio file.');
+    //         }
+    // }
+
+//     function processTranscript() {
+//     var fileInput = document.getElementById('chat-input');
+    
+//     var file = fileInput.files[0];
+//     console.log(file)
+
+//     var formData = new FormData();
+//     formData.append('file', file);
+//     console.log(formData)
+
+//     $.ajax({
+//         type: 'POST',
+//         url: '/',
+//         data: formData,
+//         success: function(data) {
+//             console.log(data);
+//             $('#result').html(data.answer);
+//         },
+//         error: function(error) {
+//             console.error(error);
+//             $('#result').html('Error occurred.');
+//         }
+//     });
+// }
+
+
     function processTranscript() {
     var fileInput = document.getElementById('chat-input');
     var file = fileInput.files[0];
 
     var reader = new FileReader();
 
-    with open(audio_file_path, 'rb') as audio_file:
-#         audio_content = audio_file.read()  # Read the content of the audio file
+    // with open(audio_file_path, 'rb') as audio_file:
+    //  audio_content = audio_file.read()  # Read the content of the audio file
         
-#         transcription = client.audio.transcriptions.create(model="whisper-1", file=audio_file, response_format="text")
+
 
     reader.onload = function(event) {
       var content = event.target.result;
+
       console.log('Transcript Text:', content);
 
       $.ajax({
@@ -577,7 +636,7 @@ footer {
       });
     };
 
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
   }
 
   document.getElementById("startRecording").addEventListener("click", initFunction);
