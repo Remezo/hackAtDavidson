@@ -20,10 +20,10 @@ def index():
     if request.method == 'POST':
         # data = request.form['content']  # Get JSON data
         # print(data)
-        file = request.form['content']
-        print(request.form['content'])
+        audio_file_path = request.form['path']
+        print(audio_file_path)
         # transcription = data['content']  # Access 'content' from JSON data
-        res = {'answer': aiapi.transcribe_audio(file)}
+        res = {'answer': aiapi.transcribe_audio(audio_file_path)}
         print (res)
         return jsonify(res), 200
 

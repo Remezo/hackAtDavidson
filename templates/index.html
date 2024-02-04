@@ -94,11 +94,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@700&family=Roboto&family=Sixtyfour&display=swap" rel="stylesheet">
 
-    <!-- Wavesurfer.js CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/wavesurfer.js@4.1.0/dist/wavesurfer.min.css" />
-
-    <!-- Wavesurfer.js JavaScript -->
-    <script src="https://unpkg.com/wavesurfer.js@4.1.0/dist/wavesurfer.min.js"></script>
+   
+   
 
 
 <style>
@@ -108,7 +105,7 @@ body.home-page {
   padding: 0;
   box-sizing: border-box;
   background-color: #fff0c8;
-  background-image: url('../M-3-projects/public/assets/images/note-taker.jpeg');
+  background-image: url('../static/images/notetaker.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -379,7 +376,7 @@ footer {
   <header>
     <div class="header-container">
         <a href="#" id="logoLink">
-            <img class="logo" src="../M-3-projects/public/assets/images/ScoopLogo.png" alt="logo">
+            <img class="logo" src="../static/images/logo.png" alt="logo">
           </a>
       <nav>
         <ul>
@@ -393,7 +390,7 @@ footer {
   <!-- Hero Section -->
   <section class="hero">
     <!-- Add image or illustration here -->
-    <span class="motto1">Get the</span> <span class="motto2">SCOOP</span> <span class="motto3">on your class today</span>
+    <span class="motto1">What's the</span> <span class="motto2">SCOOP</span> <span class="motto3">on your class today?</span>
     <p>Your personal hub for systemized class notes, key dates, and comprehensive study guides- all in one place! Just tell us the courses you're enrolled in and we'll make sure you never miss a beat.</p>
     <button id="resetButton">Get Started</button>
 
@@ -474,7 +471,8 @@ footer {
     <div class="container">
       <div class="about-us">
         <h3>About Us</h3>
-        <p>Briefly explain Scoop's mission and vision.</p>
+        <p>Our vision is to empower students with the tools they need to succeed academically, regardless of their individual challenges or circumstances. We believe that access to high-quality educational resources should be a right, not a privilege.
+          .</p>
       </div>
       <div class="contact-info">
         <h3>Contact Us</h3>
@@ -522,14 +520,14 @@ footer {
       document.getElementById('homeLink').addEventListener('click', function () {
         coursesSection.style.display = 'none';
         heroSection.style.display = 'block';
-        homePage.style.backgroundImage = 'url("../M-3-projects/public/assets/images/note-taker.jpeg")';
+        homePage.style.backgroundImage = url('../static/images/notetaker.png');
         footer.style.display = 'block';
         courseDetailsSection.style.display = 'none'; // Hide course details when going back to home
       });
       document.getElementById('logoLink').addEventListener('click', function () {
         coursesSection.style.display = 'none';
         heroSection.style.display = 'block';
-        homePage.style.backgroundImage = 'url("../M-3-projects/public/assets/images/note-taker.jpeg")';
+        homePage.style.backgroundImage = url('../static/images/notetaker.png');
         footer.style.display = 'block';
         courseDetailsSection.style.display = 'none'; // Hide course details when going back to home
     });
@@ -609,37 +607,68 @@ footer {
 // }
 
 
-    function processTranscript() {
-    var fileInput = document.getElementById('chat-input');
-    var file = fileInput.files[0];
+function processTranscript() {
+  var fileInput = document.getElementById('chat-input');
+  var file = fileInput.files[0];
 
-    var reader = new FileReader();
+  var reader = new FileReader();
 
-    // with open(audio_file_path, 'rb') as audio_file:
-    //  audio_content = audio_file.read()  # Read the content of the audio file
-        
+  reader.onload = function(event) {
+    var content = event.target.result;
+
+    console.log('Transcript Text:', content);
+
+    $.ajax({
+      type: "POST",
+      url: "/",
+      data: { "path": './lecture.mp3' },
+      success: function(data) {
+        console.log(data);
+
+        // Assuming you have elements with IDs 'abstractSummary', 'actionItems', and 'keyPoints'
+        $('#abstractSummary').text(data.answer.abstract_summary || 'N/A');
+        $('#actionItems').text(data.answer.action_items || 'N/A');
+        $('#keyPoints').text(data.answer.key_points || 'N/A');
+
+        // Create a new blank page
+        var blankPage = document.createElement('div');
+        blankPage.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: white;';
+
+        // Display the generated notes on the blank page
+        var notesContainer = document.createElement('div');
+        notesContainer.style.cssText = 'padding: 20px;';
+        notesContainer.innerHTML = '<h2>Generated Notes</h2>' +
+                                   '<p><b>Abstract Summary:</b> ' + (data.answer.abstract_summary || 'N/A') + '</p>' +
+                                   '<p><b>Key Points:</b> ' + (data.answer.action_items || 'N/A') + '</p>' +
+                                   '<p><b>Action Items:</b> ' + (data.answer.key_points || 'N/A') + '</p>';
+
+        blankPage.appendChild(notesContainer);
+        document.body.appendChild(blankPage);
+
+        // Hide other sections
+        var coursesSection = document.getElementById('coursesSection');
+        var heroSection = document.querySelector('.hero');
+        var footer = document.querySelector('footer');
+        var courseDetailsSection = document.getElementById('courseDetailsSection');
+
+        if (coursesSection) coursesSection.style.display = 'none';
+        if (heroSection) heroSection.style.display = 'none';
+        if (footer) footer.style.display = 'none';
+        if (courseDetailsSection) courseDetailsSection.style.display = 'none';
+      },
+      error: function(error) {
+        console.error(error);
+        $('#result').html('Error occurred.');
+      }
+    });
+  };
+
+  reader.readAsArrayBuffer(file);
+}
 
 
-    reader.onload = function(event) {
-      var content = event.target.result;
 
-      console.log('Transcript Text:', content);
-
-      $.ajax({
-        type: "POST",
-        url: "/",
-        data: {"content": content},
-        success: function(data) {
-          console.log(data)
-          $('#result').html(data);
-        }
-      });
-    };
-
-    reader.readAsArrayBuffer(file);
-  }
-
-  document.getElementById("startRecording").addEventListener("click", initFunction);
+document.getElementById("startRecording").addEventListener("click", initFunction);
 
 let isRecording = document.getElementById("isRecording");
 let rec;

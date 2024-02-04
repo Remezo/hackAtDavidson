@@ -12,16 +12,11 @@ api_key= config.DevelopmentConfig.OPENAI_API_KEY
 client = OpenAI(api_key=api_key)
 from docx import Document
 
-def transcribe_audio(audio):
+def transcribe_audio(audio_file_path):
 
-    if hasattr(audio, 'read'):
-        # Read the content of the file
-        audio_content = audio.read()
-    else:
-        # If it's not a file-like object, assume it's already the audio content
-        audio_content = audio
+    with open(audio_file_path, 'rb') as audio_file:
+        transcription = client.audio.transcriptions.create(model="whisper-1", file= audio_file, response_format="text")
    
-    transcription = client.audio.transcriptions.create(model="whisper-1", file= audio_content, response_format="text")
     minutes= meeting_minutes(transcription)
 
     return minutes
